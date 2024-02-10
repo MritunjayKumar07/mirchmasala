@@ -5,7 +5,23 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 import { User } from "../models/index.js";
 import { sendVarificationCodeOnMail } from "../utils/sendMail.js";
-import envConfig from "../config/envConfig.js";
+
+//Generate Access And Refresh token
+const generateAccessAndRefreshToken = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) throw new Error("User not found");
+    //Create access and refresh tokens
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+    user.refreshToken = refreshToken;
+    //{ validateBeforeSave: false } iska mutlub kuch bhe validate mat kigia direct save ho jaia db ma
+    await user.save({ validateBeforeSave: false });
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new ApiError(500, "Something went wrong while generating tokens");
+  }
+};
 
 const generateVerificationCode = () => {
   const min = 100000;
@@ -107,23 +123,88 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const otpVerification = asyncHandler(async (req, res) => {
   const { email, otp } = req.body;
-  // validate not empity.
-  if ([email, otp].some((field) => field.trim() === "")) {
-    throw new ApiError(400, "All fields are required!");
+
+  // Validate input fields
+  if (!email || !otp) {
+    throw new ApiError(400, "Both email and OTP are required.");
   }
 
-  // Validate emailId.
+  // Validate email format
   if (!isValidEmail(email)) {
-    throw new ApiError(403, "Invalid email id!");
+    throw new ApiError(403, "Invalid email format.");
   }
 
-  // validate email & contactNumber already exists.
-  const existUser = await User.findOne({
-    $or: [{ email }],
-  });
+  // Find user by email
+  const existUser = await User.findOne({ email }).select(
+    "-password -refreshToken"
+  );
 
-  //Otp Match or not
-  console.log(existUser);
+  if (!existUser) {
+    throw new ApiError(404, "User not found with the provided email.");
+  }
+
+  // Validate OTP
+  if (Number(existUser.verificationCode) !== Number(otp)) {
+    throw new ApiError(404, "Invalid OTP entered.");
+  }
+
+  // Calculate OTP expiration
+  const givenTimestamp = new Date(existUser.updatedAt).getTime();
+  const currentTimestamp = Date.now();
+  const differenceInMinutes = Math.floor(
+    (currentTimestamp - givenTimestamp) / (1000 * 60)
+  );
+
+  if (differenceInMinutes > 7) {
+    throw new ApiError(400, "OTP has expired.");
+  }
+
+  // Generate access and refresh tokens
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    existUser._id
+  );
+
+  // Set cookie options
+  const cookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax", // Adjust based on your requirements
+  };
+
+  // Set cookies and send response
+  res
+    .status(200)
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", refreshToken, cookieOptions)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: existUser,
+          accessToken,
+          refreshToken,
+        },
+        "User validate !."
+      )
+    );
 });
 
-export { registerUser, otpVerification };
+const passwordUpdate = asyncHandler(async (req, res) => {
+  const { password } = req.body;
+
+  // Validate input fields
+  if (!password) {
+    throw new ApiError(400, "Password required.");
+  }
+  if (password.length < 8) {
+    throw new ApiError(400, "Password required.");
+  }
+
+
+
+  //Save Password
+
+  console.log(password);
+});
+
+export { registerUser, otpVerification, passwordUpdate };

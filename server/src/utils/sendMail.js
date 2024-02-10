@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import dns from "dns";
-import envConfig from "../config/envConfig.js";
+
 
 const isNetworkAvailable = async () => {
   return new Promise((resolve) => {
