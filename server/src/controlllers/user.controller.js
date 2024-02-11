@@ -200,19 +200,21 @@ const passwordUpdate = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Password must be at least 8 characters long.");
   }
 
-  // Save Password
   const user = await User.findById(req.user._id).select(
     "-password -verificationCode -refreshToken"
   );
+
   if (!user) {
     throw new ApiError(404, "User not found.");
   }
 
   user.password = password;
+  user.verificationCode = null;
 
   await user.save();
   const userObj = user.toObject();
   delete userObj.password;
+  delete userObj.verificationCode;
 
   //Send Response
   return res
@@ -221,7 +223,42 @@ const passwordUpdate = asyncHandler(async (req, res) => {
 });
 
 const userNameUpdate = asyncHandler(async (req, res) => {
-  console.log(req.body);
+  const { userName } = req.body;
+
+  // Validate input field
+  if (!userName) {
+    throw new ApiError(400, "userName is required.");
+  }
+
+  if (userName.length < 3) {
+    throw new ApiError(400, "userName must be at least 3 characters long!.");
+  }
+
+  const userNameCheake = await User.findOne({ userName });
+
+  if (userNameCheake) {
+    throw new ApiError(403, "User name alwarady exist!.");
+  }
+
+  const user = await User.findById(req.user._id).select(
+    "-password -verificationCode -refreshToken"
+  );
+
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
+
+  user.userName = userName;
+
+  await user.save();
+  const userObj = user.toObject();
+  delete userObj.password;
+  delete userObj.verificationCode;
+
+  //Send Response
+  return res
+    .status(201)
+    .json(new ApiResponse(201, userObj, "userName updated successfully!"));
 });
 
 export { registerUser, otpVerification, passwordUpdate, userNameUpdate };

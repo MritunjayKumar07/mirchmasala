@@ -16,6 +16,6 @@ router
 
 router.route("/otp-verify").post(otpVerification);
 router.route("/password").post(verifyUserJWT, passwordUpdate);
-router.route("/username-update").post(verifyUserJWT, userNameUpdate);
+router.route("/username").post(verifyUserJWT, userNameUpdate);
 
 export default router;

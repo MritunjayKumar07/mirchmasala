@@ -7,8 +7,8 @@ const userSchema = new Schema(
     userName: {
       type: String,
       unique: true,
-      lowercase: true,
       trim: true,
+      lowercase: true,
       index: true,
     },
     firstName: {
@@ -25,7 +25,6 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      lowercase: true,
       trim: true,
       index: true,
     },
