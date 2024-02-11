@@ -192,19 +192,36 @@ const otpVerification = asyncHandler(async (req, res) => {
 const passwordUpdate = asyncHandler(async (req, res) => {
   const { password } = req.body;
 
-  // Validate input fields
+  // Validate input field
   if (!password) {
-    throw new ApiError(400, "Password required.");
+    throw new ApiError(400, "Password is required.");
   }
   if (password.length < 8) {
-    throw new ApiError(400, "Password required.");
+    throw new ApiError(400, "Password must be at least 8 characters long.");
   }
 
+  // Save Password
+  const user = await User.findById(req.user._id).select(
+    "-password -verificationCode -refreshToken"
+  );
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
 
+  user.password = password;
 
-  //Save Password
+  await user.save();
+  const userObj = user.toObject();
+  delete userObj.password;
 
-  console.log(password);
+  //Send Response
+  return res
+    .status(201)
+    .json(new ApiResponse(201, userObj, "Password updated successfully!"));
 });
 
-export { registerUser, otpVerification, passwordUpdate };
+const userNameUpdate = asyncHandler(async (req, res) => {
+  console.log(req.body);
+});
+
+export { registerUser, otpVerification, passwordUpdate, userNameUpdate };
