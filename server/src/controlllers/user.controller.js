@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 import { User } from "../models/index.js";
 import { sendVarificationCodeOnMail } from "../utils/sendMail.js";
+import uploadOnCloudinary from "../utils/cloudinary.js";
 
 //Generate Access And Refresh token
 const generateAccessAndRefreshToken = async (userId) => {
@@ -261,4 +262,37 @@ const userNameUpdate = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, userObj, "userName updated successfully!"));
 });
 
-export { registerUser, otpVerification, passwordUpdate, userNameUpdate };
+const avatarUpdate = asyncHandler(async (req, res) => {
+  if (!req.file.path) {
+    throw new ApiError(400, "Avatar file is required!");
+  }
+
+  const avatar = await uploadOnCloudinary(req.file.path);
+  // console.log(avatar);
+  if (!avatar) {
+    throw new ApiError(400, "Avatar file is required!");
+  }
+
+  const user = await User.findById(req.user._id).select(
+    "-password -verificationCode -refreshToken"
+  );
+
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
+
+  user.avatar = avatar.secure_url;
+  await user.save();
+
+  return res
+  .status(201)
+  .json(new ApiResponse(201, user, "Avatar updated successfully!"));
+});
+
+export {
+  registerUser,
+  otpVerification,
+  passwordUpdate,
+  userNameUpdate,
+  avatarUpdate,
+};

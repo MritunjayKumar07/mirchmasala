@@ -1,12 +1,12 @@
-//Upload Image on cloudinary
+// uploadOnCloudinary.js
 import { v2 as cloudinary } from "cloudinary";
 import envConfig from "../config/envConfig.js";
 import fs from "fs";
 
 cloudinary.config({
-  cloud_name: envConfig.cloudinaryName,
-  api_key: envConfig.cloudinaryApiKey,
-  api_secret: envConfig.cloudinaryApiSecret,
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const uploadOnCloudinary = async (locationFilePath) => {
@@ -18,10 +18,11 @@ const uploadOnCloudinary = async (locationFilePath) => {
     });
     // File Upload Successfully
     console.log("File Upload Successfully");
-    console.log(response);
+    return response;
   } catch (error) {
-    fs.unlinkSync(localFilePath);
+    fs.unlinkSync(locationFilePath);
+    throw error;
   }
 };
 
-export default { uploadOnCloudinary };
+export default uploadOnCloudinary;
