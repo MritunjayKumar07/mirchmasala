@@ -3,7 +3,7 @@ import { Admin } from "../models/admins.model.js";
 import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-const verifyAdminJWT = asyncHandler(async (req, res, next) => {
+const verifyAdminJWT = asyncHandler(async (req, _, next) => {
   try {
     // Check if an admin exists
     const existingAdmin = await Admin.findOne({ role: "admin" });
