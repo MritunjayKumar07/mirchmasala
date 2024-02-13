@@ -9,20 +9,28 @@ import {
   registerUser,
   updateUserDetail,
   userNameUpdate,
-} from "../controlllers/user.controller.js";
+} from "../controllers/user.controller.js";
 import verifyUserJWT from "../middleware/auth.middleware.js";
 
 const router = Router();
 
+// Public routes
 router.route("/register").post(registerUser);
+router.route("/login").post(loginUser);
 router.route("/otp-verify").post(otpVerification);
-router.route("/password-add-or-update").post(verifyUserJWT, passwordUpdate);
-router.route("/username-add-or-update").post(verifyUserJWT, userNameUpdate);
+
+// Routes requiring authentication
+router.use(verifyUserJWT);
+
+// Protected routes
+router.route("/password-add-or-update").post(passwordUpdate);
+router.route("/username-add-or-update").post(userNameUpdate);
 router
   .route("/avatar-add-or-update")
-  .post(verifyUserJWT, upload.single("avatar"), avatarUpdate);
-router.route("/user-detail-update").post(verifyUserJWT, updateUserDetail);
-router.route("/login").post(loginUser);
+  .post(upload.single("avatar"), avatarUpdate);
+router.route("/user-detail-update").post(updateUserDetail);
+
+// Logout route
 router.route("/logout").post(logoutUser);
 
 export default router;

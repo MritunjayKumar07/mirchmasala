@@ -2,7 +2,38 @@ import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-const adminShema = new Schema(
+// Define the address sub-schema
+const addressSchema = new Schema({
+  street: {
+    type: String,
+    required: true,
+    lowercase: true,
+  },
+  city: {
+    type: String,
+    required: true,
+    lowercase: true,
+  },
+  zipCode: {
+    type: Number,
+    required: true,
+    lowercase: true,
+  },
+  state: {
+    type: String,
+    required: true,
+    lowercase: true,
+  },
+  country: {
+    type: String,
+    required: true,
+    lowercase: true,
+    default: "india",
+  },
+});
+
+// Define the main admin schema
+const adminSchema = new Schema(
   {
     userName: {
       type: String,
@@ -15,11 +46,13 @@ const adminShema = new Schema(
     fullName: {
       type: String,
       required: true,
+      lowercase: true,
       trim: true,
     },
     lastName: {
       type: String,
       required: true,
+      lowercase: true,
       trim: true,
     },
     email: {
@@ -30,41 +63,62 @@ const adminShema = new Schema(
       trim: true,
       index: true,
     },
+    emailVerify: {
+      type: Boolean,
+      index: true,
+      default: false,
+    },
+    verificationCode: {
+      type: Number,
+    },
     contactNumber: {
       type: String,
       required: true,
       unique: true,
-      lowercase: true,
       trim: true,
       index: true,
     },
     avatar: {
-      //Use Cloudenary
       type: String,
     },
+    address: [addressSchema],
     password: {
       type: String,
-      required: [true, "Password is required"],
     },
-    refreshToken: {
+    role: {
       type: String,
+      enum: ["admin", "editor", "uploader", "viewer"],
+      default: "editor",
+      lowercase: true,
     },
+    refreshToken: String, // No need to specify required, as it's optional
   },
   { timestamps: true }
 );
 
-adminShema.pre("save", async function (next) {
+// Hash the password before saving
+adminSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
+  try {
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
-adminShema.methods.isPasswordCorrect = async function (password) {
-  return await bcrypt.compare(password, this.password);
+// Method to check if password is correct
+adminSchema.methods.isPasswordCorrect = async function (password) {
+  try {
+    return await bcrypt.compare(password, this.password);
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
-adminShema.methods.generateAccessToken = function () {
+// Method to generate access token
+adminSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -79,7 +133,8 @@ adminShema.methods.generateAccessToken = function () {
   );
 };
 
-adminShema.methods.generateRefreshToken = function () {
+// Method to generate refresh token
+adminSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -91,4 +146,5 @@ adminShema.methods.generateRefreshToken = function () {
   );
 };
 
-export const Admin = mongoose.model("Admin", adminShema);
+// Export the Admin model
+export const Admin = mongoose.model("Admin", adminSchema);

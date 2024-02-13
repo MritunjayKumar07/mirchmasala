@@ -19,12 +19,13 @@ app.use(cookieParser());
 //routes
 import userRoutes from "./routes/user.routes.js";
 import productRoutes from "./routes/product.routes.js";
-
+import adminRoutes from "./routes/admin.routes.js";
 
 // routes Declerations
 const version = "/api/v1";
 
 app.use(`${version}/users`, userRoutes);
 app.use(`${version}/product`, productRoutes);
+app.use(`${version}/controller`, adminRoutes);
 
 export { app };

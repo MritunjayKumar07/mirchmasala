@@ -31,6 +31,7 @@ const userSchema = new Schema(
     emailVerify: {
       type: Boolean,
       index: true,
+      default: false,
     },
     contactNumber: {
       type: String,
