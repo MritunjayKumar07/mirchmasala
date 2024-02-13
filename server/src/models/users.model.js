@@ -28,6 +28,10 @@ const userSchema = new Schema(
       trim: true,
       index: true,
     },
+    emailVerify: {
+      type: Boolean,
+      index: true,
+    },
     contactNumber: {
       type: String,
       unique: true,
