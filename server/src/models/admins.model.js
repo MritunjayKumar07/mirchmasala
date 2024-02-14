@@ -37,7 +37,6 @@ const adminSchema = new Schema(
   {
     userName: {
       type: String,
-      required: true,
       unique: true,
       lowercase: true,
       trim: true,
@@ -121,7 +120,7 @@ adminSchema.methods.isPasswordCorrect = async function (password) {
 adminSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
-      _id: this._id
+      _id: this._id,
     },
     process.env.ACCESS_TOKEN_SECRET,
     {

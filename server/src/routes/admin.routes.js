@@ -9,21 +9,31 @@ import {
   loginUser,
   logoutUser,
   updateUserByAdmin,
+  deleteUser,
+  addAddress,
+  deleteAddress,
+  getAllUsers,
+  getUserById,
 } from "../controllers/admin.controller.js";
 import verifyAdminJWT from "../middleware/adminAuth.middleware.js";
 
 const router = Router();
 
-// Admin routes
-router.route("/register").post(verifyAdminJWT, register);
-router.route("/otp-verify").post(otpVerification);
-router.route("/login").post(loginUser);
-router.route("/logout").post(verifyAdminJWT, logoutUser);
-router.route("/password-add-or-update").post(verifyAdminJWT, passwordUpdate);
-router.route("/username-add-or-update").post(verifyAdminJWT, userNameUpdate);
-router.route("/update-by-admin").post(verifyAdminJWT, updateUserByAdmin);
-router
-  .route("/avatar-add-or-update")
-  .post(upload.single("avatar"), verifyAdminJWT, avatarUpdate);
+// Authentication routes
+router.post("/register", verifyAdminJWT, register);
+router.post("/otp-verify", otpVerification);
+router.post("/login", loginUser);
+router.post("/logout", verifyAdminJWT, logoutUser);
+
+// User management routes
+router.post("/password-add-or-update", verifyAdminJWT, passwordUpdate);
+router.post("/username-add-or-update", verifyAdminJWT, userNameUpdate);
+router.post("/update-by-admin", verifyAdminJWT, updateUserByAdmin);
+router.delete("/delete", verifyAdminJWT, deleteUser);
+router.put("/add-address", verifyAdminJWT, addAddress);//Come problom
+router.delete("/delete-address", verifyAdminJWT, deleteAddress); //Not tested
+router.get("/all", verifyAdminJWT, getAllUsers);
+router.get("/id", verifyAdminJWT, getUserById);
+router.post("/avatar-add-or-update", verifyAdminJWT, upload.single("avatar"), avatarUpdate);
 
 export default router;

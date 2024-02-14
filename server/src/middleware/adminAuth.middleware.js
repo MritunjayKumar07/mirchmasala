@@ -27,7 +27,7 @@ const verifyAdminJWT = asyncHandler(async (req, _, next) => {
 
     const user = await Admin.findById(decodedToken._id).select("-password -refreshToken -verificationCode");
     if (!user) {
-      throw new ApiError(401, "Invalid Token! Please Login again.");
+      throw new ApiError(401, "User not found.");
     }
 
     // Set the user in the request object and proceed to the next middleware

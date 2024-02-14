@@ -46,11 +46,11 @@ function isValidIndianPhoneNumber(phoneNumber) {
 // Register new admin or user
 const register = asyncHandler(async (req, res) => {
   const { address, ...userData } = req.body;
+  // const { address, fullName, lastName, role } = req.body;
   const { email, contactNumber } = req.body;
 
   // Check for required fields
   const requiredFields = [
-    "userName",
     "fullName",
     "lastName",
     "role",
@@ -106,6 +106,7 @@ const register = asyncHandler(async (req, res) => {
   // Create new user
   const verificationCode = generateVerificationCode();
   const newUser = { ...userData, address, verificationCode };
+  // const newUser = { fullName, lastName, role, address, verificationCode };
   const user = await Admin.create(newUser);
 
   if (!user) {
@@ -165,7 +166,17 @@ const otpVerification = asyncHandler(async (req, res) => {
     throw new ApiError(400, "OTP has expired.");
   }
 
-  console.log(existUser);
+  // Check if email is already verified
+  if (existUser.emailVerify) {
+    throw new ApiError(400, "Email is already verified.");
+  }
+
+  // Mark the email as verified
+  existUser.emailVerify = true;
+
+  // Save the changes
+  await existUser.save();
+
   // Generate access and refresh tokens
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
     existUser._id
@@ -195,7 +206,7 @@ const otpVerification = asyncHandler(async (req, res) => {
           accessToken,
           refreshToken,
         },
-        "User validate !."
+        "User validated."
       )
     );
 });
@@ -383,9 +394,175 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "User logged out successfully."));
 });
 
-//Update user detail by admin
+//Update user detail by admin Only
 const updateUserByAdmin = asyncHandler(async (req, res) => {
-  console.log(req);
+  // Validate if userId is provided
+  if (!req.query.userId) {
+    throw new ApiError(400, "User ID is required.");
+  }
+
+  if (!req.user || req.user.role.toLowerCase() !== "admin") {
+    throw new ApiError(403, "You are not authorized for this action.");
+  }
+
+  const { userId } = req.query;
+
+  try {
+    // Fetch the user from the database
+    const userToUpdate = await Admin.findById(userId).select(
+      "-password -refreshToken -verificationCode"
+    );
+
+    // Check if the user exists
+    if (!userToUpdate) {
+      throw new ApiError(404, "User not found.");
+    }
+
+    // Extract the fields to update from the request body
+    const { fullName, lastName, role, email, contactNumber } = req.body;
+
+    // Update the user's fields if they are provided
+    if (fullName) {
+      userToUpdate.fullName = fullName;
+    }
+    if (lastName) {
+      userToUpdate.lastName = lastName;
+    }
+    if (role) {
+      userToUpdate.role = role;
+    }
+    if (email) {
+      if (!isValidEmail(email)) {
+        throw new ApiError(400, "Invalid email id!");
+      }
+      userToUpdate.email = email;
+    }
+    if (contactNumber) {
+      if (!isValidIndianPhoneNumber(contactNumber)) {
+        throw new ApiError(400, "Invalid contact number!");
+      }
+      userToUpdate.contactNumber = contactNumber;
+    }
+
+    // Save the updated user details
+    await userToUpdate.save();
+
+    // Send response
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          userToUpdate,
+          "User details updated successfully by admin."
+        )
+      );
+  } catch (error) {
+    throw new ApiError(500, "Error updating user details.");
+  }
+});
+
+//Delite any user
+const deleteUser = asyncHandler(async (req, res) => {
+  const userId = req.query.userId;
+
+  // Check if the user is an admin
+  if (req.user.role.toLowerCase() !== "admin") {
+    throw new ApiError(403, "You are not authorized to delete users.");
+  }
+
+  // Check if the user exists
+  const user = await Admin.findById(userId).select(
+    "-password -refreshToken -verificationCode"
+  );
+  if (!user) {
+    throw new ApiError(404, "User not found!");
+  }
+
+  // Delete the user
+  await Admin.findByIdAndDelete(userId);
+
+  res.status(200).json(new ApiResponse(200, {}, "User deleted successfully."));
+});
+
+//Add address more
+const addAddress = asyncHandler(async (req, res) => {
+  const userId = req.query.userId;
+  const addressDetails = req.body;
+
+  // Check if the user exists
+  const user = await Admin.findById(userId).select(
+    "-password -refreshToken -verificationCode"
+  );
+  if (!user) {
+    throw new ApiError(404, "User not found!");
+  }
+
+  // Add the new address to the user's address array
+  user.address.push(addressDetails);
+
+  // Save the updated user document
+  await user.save();
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, user, "Address added successfully."));
+});
+
+//Delete address
+const deleteAddress = asyncHandler(async (req, res) => {
+  const userId = req.query.userId;
+  const addressIndex = req.query.addressIndex;
+
+  // Check if the user exists
+  const user = await Admin.findById(userId);
+  if (!user) {
+    throw new ApiError(404, "User not found!");
+  }
+
+  // Check if the address index is valid
+  if (addressIndex < 0 || addressIndex >= user.address.length) {
+    throw new ApiError(400, "Invalid address index!");
+  }
+
+  // Remove the address at the specified index
+  user.address.splice(addressIndex, 1);
+
+  // Save the updated user document
+  await user.save();
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, user, "Address deleted successfully."));
+});
+
+//Return all user
+const getAllUsers = asyncHandler(async (req, res) => {
+  // Fetch all user documents
+  const users = await Admin.find({}).select(
+    "-password -refreshToken -verificationCode"
+  );
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, users, "All users retrieved successfully."));
+});
+
+//Get user by ID
+const getUserById = asyncHandler(async (req, res) => {
+  const userId = req.query.userId;
+
+  // Check if the user exists
+  const user = await Admin.findById(userId).select("-password -verificationCode -refreshToken");
+
+  if (!user) {
+    throw new ApiError(404, "User not found!");
+  }
+
+  // Send response
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User details retrieved successfully."));
 });
 
 export {
@@ -397,4 +574,9 @@ export {
   updateUserByAdmin,
   loginUser,
   logoutUser,
+  deleteUser,
+  addAddress,
+  deleteAddress,
+  getAllUsers,
+  getUserById
 };
