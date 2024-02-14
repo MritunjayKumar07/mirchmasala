@@ -38,6 +38,9 @@ const getProductById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Category not found.");
   }
   const product = category.products.filter((p) => p._id == productId);
+  if (product) {
+    throw new ApiError(404, "Product not found.");
+  }
 
   return res.status(200).json(new ApiResponse(200, product));
 });
@@ -162,24 +165,88 @@ const addProduct = asyncHandler(async (req, res, next) => {
   }
 });
 
-//----------------------Top Complite --------------------------
-
 // Delete a product
-const deleteProduct = asyncHandler(async (req, res) => {
-  const productId = req.query.productId;
-  if (!productId) {
-    throw new ApiError(400, "Product ID is required.");
-  }
+const deleteProduct = asyncHandler(async (req, res, next) => {
+  const { categoryId, productId } = req.query;
 
-  const product = await Product.findByIdAndDelete(productId);
-  if (!product) {
-    throw new ApiError(404, "Product not found.");
-  }
+  try {
+    // Validate productId and categoryId
+    if (!productId || !categoryId) {
+      throw new ApiError(400, "Both categoryId and productId are required.");
+    }
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, "Product deleted successfully."));
+    const category = await Product.findById(categoryId);
+    if (!category) {
+      throw new ApiError(404, "Category not found.");
+    }
+
+    //If not any product return -1 which is false value
+    const productIndex = category.products.findIndex((p) => p._id == productId);
+
+    if (productIndex) {
+      throw new ApiError(404, "Product not found.");
+    }
+
+    // Remove the product from the products array
+    category.products.splice(productIndex, 1);
+
+    // Save the updated category
+    await category.save();
+
+    res.status(200).json(new ApiResponse(200, "Product deleted successfully."));
+  } catch (error) {
+    next(error);
+  }
 });
+
+// Update product image
+const imageUpdateProduct = asyncHandler(async (req, res, next) => {
+  const { categoryId, productId } = req.query;
+  let image = req.file.path;
+
+  try {
+    // Validate productId and categoryId
+    if (!productId || !categoryId) {
+      throw new ApiError(400, "Both categoryId and productId are required.");
+    }
+
+    // Validate image
+    if (!image) {
+      throw new ApiError(400, "Image is required.");
+    }
+
+    // Upload image to cloudinary
+    const uploadedImage = await uploadOnCloudinary(image);
+
+    // Find the category by categoryId
+    const category = await Product.findById(categoryId);
+    if (!category) {
+      throw new ApiError(404, "Category not found.");
+    }
+
+    // Find the index of the product with productId in the products array of the category
+    const productIndex = category.products.findIndex((p) => p._id == productId);
+    if (productIndex) {
+      throw new ApiError(404, "Product not found.");
+    }
+
+    // Update the image of the product
+    category.products[productIndex].image = uploadedImage.secure_url;
+
+    // Save the updated category
+    const newProduct = await category.save();
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, newProduct, "Product image updated successfully.")
+      );
+  } catch (error) {
+    next(error);
+  }
+});
+
+//----------------------Top Complite --------------------------
 
 // Update a product
 const updateProduct = asyncHandler(async (req, res) => {
@@ -188,12 +255,6 @@ const updateProduct = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(new ApiResponse(200, user, "Address added successfully."));
-});
-
-// Update product image
-const imageUpdateProduct = asyncHandler(async (req, res) => {
-  const productId = req.query.productId;
-  res.status(201).json({ message: "ok." });
 });
 
 export {
