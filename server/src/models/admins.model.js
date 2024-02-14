@@ -86,8 +86,8 @@ const adminSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "editor", "uploader", "viewer"],
-      default: "editor",
+      enum: ["admin", "viewer"],
+      default: "viewer",
       lowercase: true,
     },
     refreshToken: String, // No need to specify required, as it's optional

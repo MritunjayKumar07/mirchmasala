@@ -23,8 +23,8 @@ const itemSchema = new Schema(
       index: true,
     },
     image: {
-      // Use Cloudinary
       type: String,
+      // Use Cloudinary
     },
     size: {
       type: String,
@@ -32,11 +32,36 @@ const itemSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["Online", "Offline"],
+      enum: ["online", "offline"],
+      default: "offline",
       required: true,
+      lowercase: true,
       index: true,
     },
     tag: [String],
+    likes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    review: [
+      {
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        review: {
+          type: String,
+          required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -47,14 +72,13 @@ const productSchema = new Schema(
       type: String,
       required: true,
       lowercase: true,
-      trim: true,
-      index: true,
     },
-    products: {
-      type: [itemSchema],
-    },
+    products: [itemSchema],
   },
   { timestamps: true }
 );
+
+// Adding index to ensure unique combination of category and product name
+itemSchema.index({ category: 1, name: 1 }, { unique: true });
 
 export const Product = mongoose.model("Product", productSchema);

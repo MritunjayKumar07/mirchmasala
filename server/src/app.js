@@ -25,7 +25,7 @@ import adminRoutes from "./routes/admin.routes.js";
 const version = "/api/v1";
 
 app.use(`${version}/users`, userRoutes);
-app.use(`${version}/product`, productRoutes);
 app.use(`${version}/controller`, adminRoutes);
+app.use(`${version}/product`, productRoutes);
 
 export { app };

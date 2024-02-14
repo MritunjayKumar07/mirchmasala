@@ -4,8 +4,6 @@ import { Admin } from "./admins.model.js";
 import { MemberShipClass } from "./memberShipsClass.model.js";
 import { MemberShip } from "./memberShips.model.js";
 import { Order } from "./orders.model.js";
-import { Like } from "./likes.model.js";
-import { Review } from "./reviews.model.js";
 import { Feedback } from "./feedbacks.model.js";
 import { Complaint } from "./complaints.model.js";
 
@@ -16,8 +14,6 @@ export {
   MemberShipClass,
   MemberShip,
   Order,
-  Like,
-  Review,
   Feedback,
   Complaint,
 };
