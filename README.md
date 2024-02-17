@@ -19,8 +19,8 @@ All admin-side files can be found in the [dashbord](https://github.com/Mritunjay
 
 All server-side files can be found in the [server](https://github.com/MritunjayKumar07/mirchmasala/tree/main/server) directory.
 
-
 ## Getting Started to use it
+
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ## Prerequisites
@@ -32,21 +32,44 @@ These instructions will get you a copy of the project up and running on your loc
 
 1. Clone the repository: `git clone https://github.com/MritunjayKumar07/mirchmasala.git`.
 2. Navigate to the project directory: cd mirchmasala.
+
 ## Install Admin Dashbord to controll the app from admin side .
+
 1. Navigate to the dashbord directory: cd dashbord.
 2. Run `npm install` in order to install all dependencies.
 3. After successful installation, run the server using `npm run dev` or `npm start`.
 
-## Open a new terminal window and navigate to the client directory and Install it. 
+## Open a new terminal window and navigate to the client directory and Install it.
+
 1. Navigate to the website directory: cd website.
 2. Run `npm install` in order to install all dependencies for client side of application.
 3. After successful installation, run the server using `npm run dev`.
 4. Connect your browser with `localhost:3000` to see the live version of the web app.
-Note : Make sure that you have started running the server before opening the website tab on your browser.
+   Note : Make sure that you have started running the server before opening the website tab on your browser.
 
-## Open a new terminal window and navigate to the server directory and Install it. 
+## Open a new terminal window and navigate to the server directory and Install it.
+
 1. Navigate to the server directory: cd server.
 2. Run `npm install` in order to install all dependencies.
-3. After successful installation, run the server using `npm run dev`.
+3. Login or signup to [Cloudinary](https://cloudinary.com/users/register_free) and get Name, Key and Secret.
+4. Add .env file in root folder and add the `.env` file and add this secrt key with value.
 
+```.env
+PORT=8000
+DB_URL=<Mongo DB>
+CORS_ORIGIN=*
 
+ACCESS_TOKEN_SECRET=<Your Access Token Secret>
+ACCESS_TOKEN_EXPIRY=1d
+REFRESH_TOKEN_SECRET=<Your Refresh Token Secret>
+REFRESH_TOKEN_EXPIRY=10d
+
+CLOUDINARY_NAME = <Your Cloudinary Name>
+CLOUDINARY_API_KEY = <Your Cloudinary API Key>
+CLOUDINARY_API_SECRET = <Your Cloudinary API Secret>
+
+SEND_MAIL_NAME=<Your Mail id>
+SEND_MAIL_PASSWORD=<Your Mail id Password>
+```
+
+5. After successful installation, run the server using `npm run dev`.
