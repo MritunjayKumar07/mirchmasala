@@ -49,6 +49,10 @@ const getProductById = asyncHandler(async (req, res) => {
 const addCatogry = asyncHandler(async (req, res, next) => {
   try {
     const { category } = req.body;
+    let image = req.file ? req.file.path : null;
+    if (image) {
+      image = await uploadOnCloudinary(req.file.path);
+    }
 
     // Validate input data
     if (!category) {
@@ -67,6 +71,44 @@ const addCatogry = asyncHandler(async (req, res, next) => {
     // Create the new category
     const newCategory = await Product.create({
       category: category.toLowerCase(),
+      image: image ? image.secure_url : null,
+    });
+
+    return res
+      .status(201)
+      .json(new ApiResponse(201, newCategory, "Category added successfully."));
+  } catch (error) {
+    next(error);
+  }
+});
+
+//Add Category addCatogry
+const addCatogryImage = asyncHandler(async (req, res, next) => {
+  try {
+    const { category } = req.body;
+    let image = req.file ? req.file.path : null;
+    if (!image) {
+      image = await uploadOnCloudinary(req.file.path);
+    }
+
+    // Validate input data
+    if (!category) {
+      throw new ApiError(400, "Category name is required.");
+    }
+
+    // Check if the category already exists
+    const existingCategory = await Product.findOne({
+      category: category.toLowerCase(),
+    });
+
+    if (existingCategory) {
+      throw new ApiError(409, "Category already exists.");
+    }
+
+    // Create the new category
+    const newCategory = await Product.create({
+      category: category.toLowerCase(),
+      image: image ? image.secure_url : null,
     });
 
     return res

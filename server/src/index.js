@@ -1,3 +1,5 @@
+/* This JavaScript code snippet is setting up a server using Node.js with Express. Here's a breakdown
+of what each part is doing: */
 import dotenv from "dotenv";
 import connectDB from "./db/connect.js";
 import { app } from "./app.js";

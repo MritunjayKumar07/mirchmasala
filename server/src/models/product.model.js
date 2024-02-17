@@ -73,6 +73,10 @@ const productSchema = new Schema(
       required: true,
       lowercase: true,
     },
+    image: {
+      type: String,
+      // Use Cloudinary
+    },
     products: [itemSchema],
   },
   { timestamps: true }

@@ -20,7 +20,7 @@ router.get("/category-id", getCategoryById);
 router.get("/product-id", getProductById);
 
 // Authentication routes (admin)
-router.post("/add-catogry", verifyAdminJWT, addCatogry);
+router.post("/add-catogry", verifyAdminJWT, upload.single("image"), addCatogry);
 router.post("/add", verifyAdminJWT, upload.single("image"), addProduct);
 router.delete("/delete", verifyAdminJWT, deleteProduct);
 router.post("/update", verifyAdminJWT, upload.single("image"), updateProduct);
