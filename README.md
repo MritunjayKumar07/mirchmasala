@@ -50,6 +50,3 @@ Note : Make sure that you have started running the server before opening the web
 3. After successful installation, run the server using `npm run dev`.
 
 
-
-
-
