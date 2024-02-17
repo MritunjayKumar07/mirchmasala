@@ -56,7 +56,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ```.env
 PORT=8000
-DB_URL=<Mongo DB>
+DB_URL=<Mongo DB url>
 CORS_ORIGIN=*
 
 ACCESS_TOKEN_SECRET=<Your Access Token Secret>
