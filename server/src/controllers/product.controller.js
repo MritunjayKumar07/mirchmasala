@@ -214,9 +214,7 @@ const imageUpdateProduct = asyncHandler(async (req, res, next) => {
   }
 });
 
-//----------------------Top Complite --------------------------
-
-//Add or update Category
+//Add Category & image or update image
 const addCatogry = asyncHandler(async (req, res, next) => {
   try {
     const { category } = req.body;
@@ -267,12 +265,55 @@ const addCatogry = asyncHandler(async (req, res, next) => {
 });
 
 // Update a product
-const updateProduct = asyncHandler(async (req, res) => {
-  const productId = req.query.productId;
+const updateProduct = asyncHandler(async (req, res, next) => {
+  const { categoryId, productId } = req.query;
 
-  res
-    .status(200)
-    .json(new ApiResponse(200, user, "Address added successfully."));
+  try {
+    // Validate productId and categoryId
+    if (!productId || !categoryId) {
+      throw new ApiError(400, "Both categoryId and productId are required.");
+    }
+
+    // Find the category by categoryId
+    const category = await Product.findById(categoryId);
+    if (!category) {
+      throw new ApiError(404, "Category not found.");
+    }
+
+    // Find the index of the product with productId in the products array of the category
+    const productIndex = category.products.findIndex((p) => p._id == productId);
+    if (productIndex === -1) {
+      throw new ApiError(404, "Product not found.");
+    }
+
+    // Update the product details
+    const { name, description, originalPrice, discountedPrice, size, status } =
+      req.body;
+
+    category.products[productIndex].name =
+      name || category.products[productIndex].name;
+    category.products[productIndex].description =
+      description || category.products[productIndex].description;
+    category.products[productIndex].originalPrice =
+      originalPrice || category.products[productIndex].originalPrice;
+    category.products[productIndex].discountedPrice =
+      discountedPrice || category.products[productIndex].discountedPrice;
+    category.products[productIndex].size =
+      size || category.products[productIndex].size;
+    category.products[productIndex].status =
+      status || category.products[productIndex].status;
+
+    // Save the updated category
+    const updatedCategory = await category.save();
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, updatedCategory, "Product updated successfully.")
+      );
+  } catch (error) {
+    next(error);
+  }
 });
 
 export {
