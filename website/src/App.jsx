@@ -26,6 +26,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import { Products } from "./screens/Products";
 import { ShoppingCart } from "./screens/ShoppingCart";
 import Checkout from "./screens/Checkout";
+import Login from "./screens/Login";
+import Signup from "./screens/Signup";
 
 function App() {
   return (
@@ -49,6 +51,8 @@ function App() {
         <Route exact path="/shopping-cart" element={<ShoppingCart />} />
         <Route exact path="/checkout" element={<Checkout />} />
         <Route exact path="/contact-us" element={<ContactUs />} />
+        <Route exact path="/login" element={<Login />} />
+        <Route exact path="/signup" element={<Signup/>} />
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/help-support" element={<HelpSupport />} />
         <Route path="/delivery-policies" element={<DeliveryPolicies />} />

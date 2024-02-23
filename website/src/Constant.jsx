@@ -25,14 +25,14 @@ const menuItems = [
   },
   {
     name: "Sign In",
-    href: "#",
+    href: "signup",
     icon: <FaUser />,
     maxCss: "inline-flex px-3 py-2 text-sm font-semibold text-black",
     minCss: "text-sm font-semibold text-gray-800 ",
   },
   {
     name: "Log In",
-    href: "#",
+    href: "login",
     icon: <IoMdLogIn />,
     maxCss:
       "rounded-md border border-black inline-flex px-3 py-2 text-sm font-semibold text-black shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black",

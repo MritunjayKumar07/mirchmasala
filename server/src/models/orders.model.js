@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const { Schema } = mongoose;
 
 const orderItemSchema = new Schema({
@@ -8,9 +7,10 @@ const orderItemSchema = new Schema({
     required: true,
     ref: "Product",
   },
-  quantity: {  // Corrected the spelling here
+  quantity: {
     type: Number,
     required: true,
+    min: 1,
   },
 });
 
@@ -25,16 +25,28 @@ const orderSchema = new Schema(
       required: true,
       lowercase: true,
     },
-    items: [orderItemSchema],  // Simplified array notation
+    contactNumber:{
+      type: String,
+      required: true
+    },
+    items: [orderItemSchema],
     status: {
       type: String,
       enum: ["PENDING", "CANCELLED", "DELIVERED"],
-      required: true,
       index: true,
       default: "PENDING",
+      validate: { // Custom validator for enum values
+        validator: function (value) {
+          return ["PENDING", "CANCELLED", "DELIVERED"].includes(value);
+        },
+        message: props => `${props.value} is not a valid status`,
+      },
     },
   },
   { timestamps: true }
 );
 
-export const Order = mongoose.model("Order", orderSchema);  // Export corrected model
+// Make the index sparse for status field
+orderSchema.index({ status: 1 }, { sparse: true });
+
+export const Order = mongoose.model("Order", orderSchema);

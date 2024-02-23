@@ -1,16 +1,42 @@
 import "./App.css";
+import { Route, Routes } from "react-router-dom";
 import { Product } from "./components/products/Product";
-import SideNaveBar from "./components/sideNavebar/SideNaveBar";
-import TopNaveBar from "./components/topNavebar/topNaveBar";
+import SideNavBar from "./components/sideNavebar/SideNaveBar.jsx"; 
+import TopNavBar from "./components/topNavebar/TopNaveBar.jsx"; 
+import Dashboard from "./pages/Dashbord.jsx"; 
+import ErrorPage from "./pages/Dashbord.jsx"; 
+import Login from "./pages/Login.jsx";
+import Signup from "./pages/Signup.jsx";
+import { useState } from "react";
+import OTPValidate from "./pages/OTPValidate.jsx";
 
 function App() {
+  // const [isLogdIn, setIsLogdIn] = useState(true);
+  const [isLogdIn, setIsLogdIn] = useState(false);
   return (
-    <div className="flex">
-      <SideNaveBar />
-      <div className="relative w-full bg-white">
-        <TopNaveBar />
-        <Product />
-      </div>
+    <div>
+      {isLogdIn ? (
+        <div className="flex">
+          <SideNavBar />
+          <div className="relative w-full bg-white">
+            <TopNavBar />
+            <Routes onUpdate={() => window.scrollTo(0, 0)}>
+              <Route index path="/" element={<Dashboard />} />
+              <Route path="/product" element={<Product />} />
+              <Route path="*" element={<ErrorPage />} />
+            </Routes>
+          </div>
+        </div>
+      ) : (
+        <div className="flex justify-center">
+          <Routes onUpdate={() => window.scrollTo(0, 0)}>
+            <Route index path="/" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/otp-validate" element={<OTPValidate/>} />
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+        </div>
+      )}
     </div>
   );
 }

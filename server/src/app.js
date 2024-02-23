@@ -20,6 +20,7 @@ app.use(cookieParser());
 import userRoutes from "./routes/user.routes.js";
 import productRoutes from "./routes/product.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import orderRoutes from "./routes/orders.routes.js";
 
 // routes Declerations
 const version = "/api/v1";
@@ -27,5 +28,6 @@ const version = "/api/v1";
 app.use(`${version}/users`, userRoutes);
 app.use(`${version}/controller`, adminRoutes);
 app.use(`${version}/product`, productRoutes);
+app.use(`${version}/orders`, orderRoutes);
 
 export { app };

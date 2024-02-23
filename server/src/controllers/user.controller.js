@@ -373,7 +373,25 @@ const updateUserDetail = asyncHandler(async (req, res) => {
 
 //Login User
 const loginUser = asyncHandler(async (req, res) => {
-  const { userName, email, password } = req.body;
+  const { loginId, password } = req.body;
+  // const { userName, email, password } = req.body;
+
+  let { email, userName } = undefined;
+
+  function checkSubstrings(str) {
+    var dotRegex = /\./;
+    var comRegex = /com/;
+    var atSymbolRegex = /@/;
+    var anyPresent =
+      dotRegex.test(str) || comRegex.test(str) || atSymbolRegex.test(str);
+    return anyPresent;
+  }
+
+  if (checkSubstrings(loginId)) {
+    email = loginId;
+  } else {
+    userName = loginId;
+  }
 
   //validate
   if (!(userName || email)) {
