@@ -37,23 +37,25 @@ function OTPValidate() {
     e.preventDefault();
     const enteredOTP = otp.join("");
 
-    try {
-      const response = await fetch("your_verification_api_url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ otp: enteredOTP }),
-      });
+    console.log(enteredOTP)
 
-      if (!response.ok) throw new Error("Failed to verify OTP");
+    // try {
+    //   const response = await fetch("your_verification_api_url", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ otp: enteredOTP }),
+    //   });
 
-      const data = await response.json();
-      !data.success
-        ? setOtpError("❌ Wrong OTP. Please check again.")
-        : setOtpError(null);
-    } catch (error) {
-      console.error("Error verifying OTP:", error);
-      setOtpError("❌ Error verifying OTP. Please try again later.");
-    }
+    //   if (!response.ok) throw new Error("Failed to verify OTP");
+
+    //   const data = await response.json();
+    //   !data.success
+    //     ? setOtpError("❌ Wrong OTP. Please check again.")
+    //     : setOtpError(null);
+    // } catch (error) {
+    //   console.error("Error verifying OTP:", error);
+    //   setOtpError("❌ Error verifying OTP. Please try again later.");
+    // }
   };
 
   return (
