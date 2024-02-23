@@ -5,10 +5,15 @@ import { useState } from "react";
 
 function Signup() {
   const [data, setData] = useState({
-    firstName: "",
+    fullName: "",
     lastName: "",
     email: "",
     contactNumber: "",
+    street: "", 
+    city: "", 
+    zipCode: "", 
+    state: "", 
+    country: "",
   });
   const [isError, setIsError] = useState("");
 
@@ -61,22 +66,175 @@ function Signup() {
           </p>
           <form onSubmit={handleSubmit} className="mt-8">
             <div className="space-y-5">
+              <div className="flex gap-2">
+                <div>
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    First Name{" "}
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      name="fullName"
+                      onChange={handleChange}
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="text"
+                      placeholder="first name"
+                    ></input>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    Last Name{" "}
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      name="lastName"
+                      onChange={handleChange}
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="text"
+                      placeholder="last name"
+                    ></input>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <div>
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    Email address{" "}
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      name="email"
+                      onChange={handleChange}
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="email"
+                      placeholder="email"
+                    ></input>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    Contact Number{" "}
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      name="contactNumber"
+                      inputMode="numeric"
+                      onChange={handleChange}
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="tel"
+                      placeholder="contact number"
+                    ></input>
+                  </div>
+                </div>
+              </div>
               <div>
                 <label
                   htmlFor=""
                   className="text-base font-medium text-gray-900"
                 >
                   {" "}
-                  First Name{" "}
+                  Position{" "}
                 </label>
                 <div className="mt-2">
                   <input
-                    name="firstName"
+                    name="role" //Posible only ["admin", "viewer"]
                     onChange={handleChange}
                     className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                     type="text"
-                    placeholder="first name"
+                    placeholder="Position"
                   ></input>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <div>
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    Country{" "}
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      name="country"
+                      onChange={handleChange}
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="text"
+                      placeholder="country"
+                    ></input>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    state{" "}
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      name="state"
+                      onChange={handleChange}
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="text"
+                      placeholder="state"
+                    ></input>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <div>
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    City{" "}
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      name="city"
+                      onChange={handleChange}
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="text"
+                      placeholder="city"
+                    ></input>
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    ZipCode{" "}
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      name="zipCode"
+                      onChange={handleChange}
+                      className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="text"
+                      placeholder="zipCode"
+                    ></input>
+                  </div>
                 </div>
               </div>
               <div>
@@ -85,53 +243,15 @@ function Signup() {
                   className="text-base font-medium text-gray-900"
                 >
                   {" "}
-                  Last Name{" "}
+                  Street{" "}
                 </label>
                 <div className="mt-2">
                   <input
-                    name="lastName"
+                    name="street"
                     onChange={handleChange}
                     className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                     type="text"
-                    placeholder="last name"
-                  ></input>
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor=""
-                  className="text-base font-medium text-gray-900"
-                >
-                  {" "}
-                  Email address{" "}
-                </label>
-                <div className="mt-2">
-                  <input
-                    name="email"
-                    onChange={handleChange}
-                    className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                    type="email"
-                    placeholder="email"
-                  ></input>
-                </div>
-              </div>
-              <div>
-                <label
-                  htmlFor=""
-                  className="text-base font-medium text-gray-900"
-                >
-                  {" "}
-                  Contact Number{" "}
-                </label>
-                <div className="mt-2">
-                  <input
-                    name="contactNumber"
-                    inputMode="numeric"
-                    onChange={handleChange}
-                    className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
-                    type="tel"
-                    placeholder="contact number"
+                    placeholder="street"
                   ></input>
                 </div>
               </div>
