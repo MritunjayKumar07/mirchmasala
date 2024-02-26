@@ -1,8 +1,8 @@
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { AddUpdatePassword } from "../Api/User";
+import { AddUpdatePassword } from "../../Api/User";
 function UpdatePassword() {
   const [passwordError, setPasswordError] = useState(null);
   const [isAlphaUpper, setIsAlphaUpper] = useState(false);

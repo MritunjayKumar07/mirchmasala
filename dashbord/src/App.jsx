@@ -4,25 +4,39 @@ import { Product } from "./components/products/Product";
 import SideNavBar from "./components/sideNavebar/SideNaveBar";
 import TopNavBar from "./components/topNavebar/TopNaveBar";
 import Dashboard from "./pages/Dashbord";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import { useEffect, useState } from "react";
-import OTPValidate from "./pages/OTPValidate";
+import Login from "./pages/authPage/Login";
+import Signup from "./pages/authPage/Signup";
+import OTPValidate from "./pages/authPage/OTPValidate";
 import ApiError from "./pages/ErroHandling/ApiError";
-import UpdatePassword from "./pages/UpdatePassword";
-import UpdateUserName from "./pages/UpdateUserName";
+import UpdatePassword from "./pages/authPage/UpdatePassword";
+import UpdateUserName from "./pages/authPage/UpdateUserName";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { ValidateAccessToken } from "./Api/ValidationAccessToken";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  const validateLogin = async () => {
+    const accessToken = Cookies.get("accessToken");
+    if (accessToken) {
+      const res = await ValidateAccessToken(accessToken, navigate);
+      if (res === 200) {
+        setIsLoggedIn(true);
+      }
+    }
+  };
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     if (userInfo) {
-      setIsLoggedIn(true);
+      validateLogin();
     } else {
       setIsLoggedIn(false);
     }
-  }, [localStorage.getItem("userInfo")]);
+  }, [Cookies.get("accessToken")]);
 
   return (
     <div className="flex">
@@ -52,10 +66,10 @@ function LoggedInRoutes() {
 
 function LoggedOutRoutes() {
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center w-full">
       <Routes onUpdate={() => window.scrollTo(0, 0)}>
-        <Route index path="/" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
+        <Route index path="/signup" element={<Signup />} />
         <Route path="/otp-validate/:email" element={<OTPValidate />} />
         <Route path="/api-error/:code" element={<ApiError />} />
         <Route path="*" element={<ApiError />} />

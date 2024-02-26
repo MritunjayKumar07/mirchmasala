@@ -1,15 +1,15 @@
-import logo from "../assets/logo.png";
+import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import logo from "../../assets/logo.png";
 import { FaArrowRightLong } from "react-icons/fa6";
-import { AddUpdateUserName } from "../Api/User";
+import { LoginUser } from "../../Api/User";
 
-function UpdateUserName() {
-  const [userNameError, setUserNameError] = useState(null);
+function Login() {
   const navigate = useNavigate();
-
   const [data, setData] = useState({
-    userName: "",
+    loginId: "",
+    password: "",
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,12 +21,9 @@ function UpdateUserName() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(data);
-    const res = await AddUpdateUserName(data.userName, navigate);
+    const res = await LoginUser(data, navigate);
     if (res) {
-      navigate(`/login`);
-    } else {
-      setUserNameError("Failed to update userName. Please try again.");
+      navigate("/");
     }
   };
   return (
@@ -37,7 +34,7 @@ function UpdateUserName() {
             <img src={logo} alt="mirch masala" className="w-24" />
           </div>
           <h2 className="text-center text-2xl font-bold leading-tight text-black">
-            Add & Update UserName
+            Sign in to your account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 ">
             Don&apos;t have an account?{" "}
@@ -56,16 +53,44 @@ function UpdateUserName() {
                   htmlFor=""
                   className="text-base font-medium text-gray-900"
                 >
-                  UserName
+                  {" "}
+                  Email Id / UserName{" "}
                 </label>
                 <div className="mt-2">
                   <input
-                    name="userName"
+                    name="loginId"
                     className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                     type="text"
                     onChange={handleChange}
-                    placeholder="Enter userName"
-                    required={true}
+                    placeholder="email/username"
+                  ></input>
+                </div>
+              </div>
+              <div>
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor=""
+                    className="text-base font-medium text-gray-900"
+                  >
+                    {" "}
+                    Password{" "}
+                  </label>
+                  <a
+                    href="#"
+                    title=""
+                    className="text-sm font-semibold text-black hover:underline"
+                  >
+                    {" "}
+                    Forgot password?{" "}
+                  </a>
+                </div>
+                <div className="mt-2">
+                  <input
+                    name="password"
+                    onChange={handleChange}
+                    className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
+                    type="password"
+                    placeholder="Password"
                   ></input>
                 </div>
               </div>
@@ -77,9 +102,6 @@ function UpdateUserName() {
                   Get started <FaArrowRightLong className="ml-2" size={16} />
                 </button>
               </div>
-              {userNameError && (
-                <p className="text-red-500 text-sm">{userNameError}</p>
-              )}
             </div>
           </form>
         </div>
@@ -88,4 +110,4 @@ function UpdateUserName() {
   );
 }
 
-export default UpdateUserName;
+export default Login;

@@ -186,3 +186,43 @@ export async function LoginUser(data, navigate) {
     console.error("Error Login:", error);
   }
 }
+
+export async function LogoutUser(navigate) {
+  try {
+    // Retrieve the authorization token from localStorage or cookies
+    const accessToken = Cookies.get("accessToken");
+    if (!accessToken) {
+      throw new Error("Access token not found");
+    }
+
+    // Set headers with authorization token
+    const headersList = {
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    // Send a POST request to the logout endpoint
+    const response = await fetch(
+      "http://localhost:8000/api/v1/controller/logout",
+      {
+        method: "POST",
+        headers: headersList,
+      }
+    );
+
+    // Check if the request was successful
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Clear the access token from cookies or localStorage
+    deleteCookie("accessToken");
+    deleteCookie("refreshToken");
+    localStorage.clear("userInfo");
+
+    // Redirect or navigate to the desired page
+    navigate("/logout-success");
+  } catch (error) {
+    console.error("Error:", error);
+    // Handle errors as needed
+  }
+}

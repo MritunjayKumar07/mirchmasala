@@ -9,10 +9,18 @@ import {
 } from "react-icons/md";
 import { FaProductHunt } from "react-icons/fa";
 import Logo from "../../assets/logo.png";
+import { IoMdLogOut } from "react-icons/io";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LogoutUser } from "../../Api/User";
 
 function SideNaveBar() {
+  const navigate = useNavigate();
   const [isMenu, setIsMenu] = useState(true);
+
+  const LogoutUserFromDashbord = async () => {
+    await LogoutUser(navigate);
+  };
   return (
     <aside
       className={`flex h-screen ${isMenu ? "w-52" : "w-20"} flex-col ${
@@ -115,6 +123,17 @@ function SideNaveBar() {
                 <span className="mx-2 text-sm font-medium">Setting</span>
               ) : null}
             </a>
+          </div>
+          <div className="space-y-3 ">
+            <button
+              onClick={() => LogoutUserFromDashbord()}
+              className="flex transform items-center rounded-lg px-3 py-2 text-white bg-red-500 transition-colors duration-300 hover:bg-gray-100 hover:text-gray-700"
+              style={{ width: "100%" }}
+              href="#"
+            >
+              <IoMdLogOut className="h-5 w-5" aria-hidden="true" />
+              <span className="mx-2 text-sm font-medium">Logout</span>
+            </button>
           </div>
         </nav>
       </div>

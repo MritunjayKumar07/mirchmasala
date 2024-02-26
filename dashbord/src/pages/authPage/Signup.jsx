@@ -1,9 +1,9 @@
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { registerUser } from "../Api/User.js";
+import { registerUser } from "../../Api/User.js";
 
 function Signup() {
   const navigate = useNavigate();

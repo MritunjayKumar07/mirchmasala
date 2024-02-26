@@ -1,8 +1,8 @@
 import { useRef, useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
-import logo from "../assets/logo.png";
-import { OtpVerify } from "../Api/User.js";
+import logo from "../../assets/logo.png";
+import { OtpVerify } from "../../Api/User.js";
 
 const numberOfDigits = 6;
 
