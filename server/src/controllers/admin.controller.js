@@ -320,8 +320,20 @@ const avatarUpdate = asyncHandler(async (req, res) => {
 
 //Login User
 const loginUser = asyncHandler(async (req, res) => {
-  const { userName, email, password } = req.body;
+  const { loginId, password } = req.body;
+  // const { userName, email, password } = req.body;
 
+  let email, userName;
+
+  function isEmail(str) {
+    return /\S+@\S+\.\S+/.test(str);
+  }
+
+  if (isEmail(loginId)) {
+    email = loginId;
+  } else {
+    userName = loginId;
+  }
   //validate
   if (!(userName || email)) {
     throw new ApiError(400, "Username or email is required!");

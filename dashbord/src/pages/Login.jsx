@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { FaArrowRightLong } from "react-icons/fa6";
+import { LoginUser } from "../Api/User";
 
 function Login() {
+  const navigate = useNavigate();
   const [data, setData] = useState({
     loginId: "",
     password: "",
@@ -16,9 +19,12 @@ function Login() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(data);
+    const res = await LoginUser(data, navigate);
+    if (res) {
+      navigate("/");
+    }
   };
   return (
     <section>
