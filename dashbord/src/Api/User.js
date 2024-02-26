@@ -1,3 +1,5 @@
+import { ValidateAccessToken } from "./ValidationAccessToken";
+
 export async function registerUser(userData) {
   const headersList = {
     Accept: "*/*",
@@ -14,29 +16,6 @@ export async function registerUser(userData) {
   );
 
   return response;
-}
-
-async function ValidateAccessToken(accessToken) {
-  console.log("object", accessToken);
-  try {
-    const headersList = {
-      Accept: "*/*",
-      Authorization: `Bearer ${accessToken}`,
-    };
-
-    const response = await fetch(
-      "http://localhost:8000/api/v1/controller/validate-access-token",
-      {
-        method: "POST",
-        headers: headersList,
-      }
-    );
-
-    return response;
-  } catch (error) {
-    console.error("Error validating access token:", error);
-    throw error; // Rethrow the error to handle it in the calling function
-  }
 }
 
 export async function OtpVerify(bodyContent, navigate) {
@@ -64,7 +43,10 @@ export async function OtpVerify(bodyContent, navigate) {
       const { accessToken, refreshToken } = responseData.data;
       document.cookie = `accessToken=${accessToken}`;
       document.cookie = `refreshToken=${refreshToken}`;
-      await ValidateAccessToken(accessToken);
+      const res = await ValidateAccessToken(accessToken, navigate);
+      if (res === 200) {
+        return true;
+      }
     }
   } catch (error) {
     console.error("Error verifying OTP:", error);

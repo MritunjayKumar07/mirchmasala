@@ -20,13 +20,13 @@ const verifyUserJWT = asyncHandler(async (req, _, next) => {
     );
 
     if (!user) {
-      throw new ApiError(401, "Invalid Token! Please Login again.");
+      throw new ApiError(404, "Invalid Token! Please Login again.");
     }
 
     req.user = user;
     next();
   } catch (error) {
-    throw new ApiError(401, error?.message || "Invalid access token !");
+    throw new ApiError(404, error?.message || "Invalid access token !");
   }
 });
 export default verifyUserJWT;

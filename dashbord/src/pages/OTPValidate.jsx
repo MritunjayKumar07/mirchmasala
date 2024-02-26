@@ -53,7 +53,10 @@ function OTPValidate() {
         otp: enteredOTP,
       };
 
-      await OtpVerify(bodyContent, navigate);
+      const res = await OtpVerify(bodyContent, navigate);
+      if (res) {
+        navigate(`/update-password`);
+      }
     } catch (error) {
       console.error("Error verifying OTP:", error);
       setOtpError("❌ Error verifying OTP. Please try again later.");

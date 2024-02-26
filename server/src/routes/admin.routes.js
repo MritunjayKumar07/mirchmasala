@@ -16,6 +16,8 @@ import {
   getUserById,
 } from "../controllers/admin.controller.js";
 import verifyAdminJWT from "../middleware/adminAuth.middleware.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import { AuthResponse } from "../utils/AuthResponse.js";
 
 const router = Router();
 
@@ -26,7 +28,13 @@ router.post("/login", loginUser);
 router.post("/logout", verifyAdminJWT, logoutUser);
 
 // User management routes
-router.post("/validate-access-token", verifyAdminJWT);
+router.post(
+  "/validate-access-token",
+  verifyAdminJWT,
+  asyncHandler(async (_, res) => {
+    return new AuthResponse(res).send({ message: "Access token is valid!" });
+  })
+);
 router.post("/password-add-or-update", verifyAdminJWT, passwordUpdate);
 router.post("/username-add-or-update", verifyAdminJWT, userNameUpdate);
 router.post("/update-by-admin", verifyAdminJWT, updateUserByAdmin);

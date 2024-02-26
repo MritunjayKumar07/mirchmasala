@@ -12,7 +12,8 @@ const verifyAdminJWT = asyncHandler(async (req, _, next) => {
     }
 
     // Get the token from the request
-    const token = req.cookies?.accessToken || req.headers["authorization"]?.split(" ")[1];
+    const token =
+      req.cookies?.accessToken || req.headers["authorization"]?.split(" ")[1];
     if (!token) {
       throw new ApiError(401, "Unauthorized request! Token not provided.");
     }
@@ -25,7 +26,9 @@ const verifyAdminJWT = asyncHandler(async (req, _, next) => {
       throw new ApiError(401, "Invalid Token! Please Login again.");
     }
 
-    const user = await Admin.findById(decodedToken._id).select("-password -refreshToken -verificationCode");
+    const user = await Admin.findById(decodedToken._id).select(
+      "-password -refreshToken -verificationCode"
+    );
     if (!user) {
       throw new ApiError(401, "User not found.");
     }
