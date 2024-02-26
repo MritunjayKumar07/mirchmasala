@@ -68,6 +68,7 @@ function OTPValidate() {
     setIsSubmit(true);
     const enteredOTP = otp.join("");
     await handleOtpVerification(enteredOTP);
+    setIsSubmit(false);
   };
 
   const resendOtpHandler = async () => {

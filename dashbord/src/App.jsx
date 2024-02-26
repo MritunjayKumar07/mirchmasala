@@ -9,6 +9,8 @@ import Signup from "./pages/Signup.jsx";
 import { useState } from "react";
 import OTPValidate from "./pages/OTPValidate.jsx";
 import ApiError from "./pages/ErroHandling/ApiError.jsx";
+import UpdatePassword from "./pages/UpdatePassword.jsx";
+import UpdateUserName from "./pages/UpdateUserName.jsx";
 
 function App() {
   // const [isLogdIn, setIsLogdIn] = useState(true);
@@ -23,6 +25,8 @@ function App() {
             <Routes onUpdate={() => window.scrollTo(0, 0)}>
               <Route index path="/" element={<Dashboard />} />
               <Route path="/product" element={<Product />} />
+              <Route path="/update-password" element={<UpdatePassword />} />
+              <Route path="/update-username" element={<UpdateUserName />} />
               <Route path="/api-error/:code" element={<ApiError />} />
               <Route path="*" element={<ApiError />} />
             </Routes>
@@ -34,6 +38,8 @@ function App() {
             <Route index path="/" element={<Signup />} />
             <Route path="/login" element={<Login />} />
             <Route path="/otp-validate/:email" element={<OTPValidate />} />
+            <Route path="/update-password" element={<UpdatePassword />} />
+            <Route path="/update-username" element={<UpdateUserName />} />
             <Route path="/api-error/:code" element={<ApiError />} />
             <Route path="*" element={<ApiError />} />
           </Routes>

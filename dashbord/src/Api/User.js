@@ -1,4 +1,5 @@
 import { ValidateAccessToken } from "./ValidationAccessToken";
+import Cookies from 'js-cookie';
 
 export async function registerUser(userData) {
   const headersList = {
@@ -50,5 +51,47 @@ export async function OtpVerify(bodyContent, navigate) {
     }
   } catch (error) {
     console.error("Error verifying OTP:", error);
+  }
+}
+
+export async function AddUpdatePassword(password) {
+  try {
+    console.log(password);
+
+    // Retrieve the authorization token from localStorage
+    const accessToken = Cookies.get('accessToken');
+    if (!accessToken) {
+      throw new Error("Access token not found");
+    }
+
+    const headersList = {
+      Accept: "application/json",
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    };
+
+    const bodyContent = JSON.stringify({
+      password: password,
+    });
+
+    const response = await fetch(
+      "http://localhost:8000/api/v1/controller/password-add-or-update",
+      {
+        method: "POST",
+        body: bodyContent,
+        headers: headersList,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return true;
+  } catch (error) {
+    console.error("Error:", error);
+    return false;
   }
 }
