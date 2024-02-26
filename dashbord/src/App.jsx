@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { ValidateAccessToken } from "./Api/ValidationAccessToken";
+import UpdateProfilePhoto from "./pages/authPage/UpdateProfilePhoto";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -53,6 +54,7 @@ function LoggedInRoutes() {
         <TopNavBar />
         <Routes onUpdate={() => window.scrollTo(0, 0)}>
           <Route index path="/" element={<Dashboard />} />
+          <Route path="/update-Profile-Photo" element={<UpdateProfilePhoto/>} />
           <Route path="/product" element={<Product />} />
           <Route path="/update-password" element={<UpdatePassword />} />
           <Route path="/update-username" element={<UpdateUserName />} />

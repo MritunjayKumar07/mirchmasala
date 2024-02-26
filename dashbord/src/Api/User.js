@@ -226,3 +226,46 @@ export async function LogoutUser(navigate) {
     // Handle errors as needed
   }
 }
+
+export async function UpdateAvatar(avatarFile) {
+  try {
+    const accessToken = Cookies.get("accessToken");
+    if (!accessToken) {
+      throw new Error("Access token not found");
+    }
+
+    // Set headers with authorization token
+    let headersList = {
+      Accept: "*/*",
+      Authorization: `Bearer ${accessToken}`,
+    };
+
+    // Create a FormData object to send file data
+    let bodyContent = new FormData();
+    bodyContent.append("avatar", avatarFile); // Append the avatar file
+
+    // Send a POST request to update avatar
+    const response = await fetch(
+      "http://localhost:8000/api/v1/controller/avatar-add-or-update",
+      {
+        method: "POST",
+        body: bodyContent,
+        headers: headersList,
+      }
+    );
+
+    // Check if the request was successful
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Log the response data
+    let data = await response.json();
+    console.log(data);
+    localStorage.setItem("userInfo", JSON.stringify(data.data));
+    return true; // Return true indicating success
+  } catch (error) {
+    console.error("Error updating avatar:", error);
+    return false; // Return false indicating failure
+  }
+}

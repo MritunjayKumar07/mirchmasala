@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 import Logo from "../../assets/logo.png";
+import { Link } from "react-router-dom";
 
 const menuItems = [
   {
@@ -48,7 +49,7 @@ function TopNaveBar() {
             placeholder="Serach"
           ></input>
         </div>
-        <div className="ml-2 mt-2 hidden lg:block">
+        <Link to={"update-Profile-Photo"} className="ml-2 mt-2 hidden lg:block">
           <span className="relative inline-block">
             <img
               className="h-10 w-10 rounded-full"
@@ -57,7 +58,7 @@ function TopNaveBar() {
             />
             <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-600 ring-2 ring-white"></span>
           </span>
-        </div>
+        </Link>
         <div className="ml-2 lg:hidden">
           <FaBars onClick={toggleMenu} className="h-6 w-6 cursor-pointer" />
         </div>
@@ -98,7 +99,10 @@ function TopNaveBar() {
                     ))}
                   </nav>
                 </div>
-                <div className="ml-3 mt-4 flex items-center space-x-2">
+                <Link
+                  to={"update-Profile-Photo"}
+                  className="ml-3 mt-4 flex items-center space-x-2"
+                >
                   <img
                     className="inline-block h-10 w-10 rounded-full"
                     src={Logo}
@@ -112,7 +116,7 @@ function TopNaveBar() {
                       @mirchmasala
                     </span>
                   </span>
-                </div>
+                </Link>
               </div>
             </div>
           </div>
