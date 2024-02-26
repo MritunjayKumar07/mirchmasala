@@ -33,7 +33,7 @@ function App() {
           <Routes onUpdate={() => window.scrollTo(0, 0)}>
             <Route index path="/" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/otp-validate" element={<OTPValidate />} />
+            <Route path="/otp-validate/:email" element={<OTPValidate />} />
             <Route path="/api-error/:code" element={<ApiError />} />
             <Route path="*" element={<ApiError />} />
           </Routes>

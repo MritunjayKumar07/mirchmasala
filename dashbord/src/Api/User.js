@@ -1,5 +1,4 @@
 export async function registerUser(userData) {
-  localStorage.setItem("SignInData", JSON.stringify(userData));
   const headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -17,37 +16,8 @@ export async function registerUser(userData) {
   return response;
 }
 
-export async function OtpVerify(bodyContent) {
-  bodyContent = bodyContent || JSON.parse(localStorage.getItem("SignInData"));
-  if (!bodyContent) throw new Error("No User Data Found");
-
-  const headersList = {
-    Accept: "*/*",
-    "Content-Type": "application/json",
-  };
-
-  const response = await fetch(
-    "http://localhost:8000/api/v1/controller/otp-verify",
-    {
-      method: "POST",
-      body: JSON.stringify(bodyContent),
-      headers: headersList,
-    }
-  );
-
-  const responseData = await response.json();
-
-  if (responseData.success) {
-    localStorage.clear("SignInData");
-    const { accessToken, refreshToken } = responseData.data;
-    document.cookie = `accessToken=${accessToken}`;
-    document.cookie = `refreshToken=${refreshToken}`;
-  }
-
-  return responseData;
-}
-
-export async function ValidateAccessToken(accessToken) {
+async function ValidateAccessToken(accessToken) {
+  console.log("object", accessToken);
   try {
     const headersList = {
       Accept: "*/*",
@@ -66,5 +36,37 @@ export async function ValidateAccessToken(accessToken) {
   } catch (error) {
     console.error("Error validating access token:", error);
     throw error; // Rethrow the error to handle it in the calling function
+  }
+}
+
+export async function OtpVerify(bodyContent, navigate) {
+  const headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+  };
+
+  try {
+    const response = await fetch(
+      "http://localhost:8000/api/v1/controller/otp-verify",
+      {
+        method: "POST",
+        body: JSON.stringify(bodyContent),
+        headers: headersList,
+      }
+    );
+    console.log("1", response);
+    if ([400, 403, 404, 405, 409].includes(response.status)) {
+      navigate(`/api-error/${response.status}`);
+    }
+    const responseData = await response.json();
+
+    if (responseData.success) {
+      const { accessToken, refreshToken } = responseData.data;
+      document.cookie = `accessToken=${accessToken}`;
+      document.cookie = `refreshToken=${refreshToken}`;
+      await ValidateAccessToken(accessToken);
+    }
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
   }
 }

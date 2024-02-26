@@ -11,7 +11,7 @@ const ApiErrorResponse = [
   },
   {
     statuscode: 403,
-    message: "Invalid email.",
+    message: "Invalid email or OTP invalid.",
     description: "Please provide all the required information in request body!",
   },
   {

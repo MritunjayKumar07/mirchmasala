@@ -1,19 +1,29 @@
 import { useRef, useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import logo from "../assets/logo.png";
-import { OtpVerify, ValidateAccessToken } from "../Api/User.js";
-import Cookies from "js-cookie";
+import { OtpVerify } from "../Api/User.js";
 
 const numberOfDigits = 6;
 
 function OTPValidate() {
   const [otp, setOtp] = useState(new Array(numberOfDigits).fill(""));
   const [otpError, setOtpError] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(450); // 7 minutes 30 seconds
   const [isSubmit, setIsSubmit] = useState(false);
   const otpBoxRefs = useRef([]);
+  const { email } = useParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (timeLeft > 0) {
+        setTimeLeft(timeLeft - 1);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [timeLeft]);
 
   const handleChange = (value, index) => {
     const newOtp = [...otp];
@@ -34,72 +44,35 @@ function OTPValidate() {
   };
 
   const handleOtpVerification = async (enteredOTP) => {
+    if (!email) {
+      alert("Not found email!");
+    }
     try {
       const bodyContent = {
-        email: localStorage.getItem("email") || null,
+        email: email,
         otp: enteredOTP,
       };
 
-      const res = await OtpVerify(bodyContent);
-      console.log(res);
-      if ([400, 403, 404, 405, 409].includes(res.status)) {
-        navigate(`/api-error/${res.status}`);
-      }
-      if (res.status === 200 || res.status === 201) {
-        await validateAccessToken();
-      }
+      await OtpVerify(bodyContent, navigate);
     } catch (error) {
       console.error("Error verifying OTP:", error);
       setOtpError("❌ Error verifying OTP. Please try again later.");
     }
   };
 
-  const validateAccessToken = async () => {
-    try {
-      const accessToken = Cookies.get("accessToken");
-      console.log(accessToken);
-      if (!accessToken) return;
-      const res = await ValidateAccessToken(accessToken);
-      console.log(res.statusCode);
-      if (res.statusCode === 200) {
-        navigate(`/api-error/${res.status}`);
-      }
-      if (res.statusCode === 400) {
-        alert("Both email and OTP are required.");
-        setOtpError("❌ Both email and OTP are required.");
-      }
-      if (res.statusCode === 403) {
-        alert("Invalid email/OTP format.");
-        setOtpError("❌ Invalid email/OTP format.");
-      }
-      if (res.statusCode === 404) {
-        alert("User not found with the provided email address.");
-        setOtpError("❌ User not found with the provided email address.");
-      }
-      if (res.statusCode === 405) {
-        alert("OTP has expired.");
-        setOtpError("❌ OTP has expired.");
-      }
-      //  else {
-      //   console.log("Access token validation failed");
-      //   setOtpError("❌ Access token validation failed.");
-      // }
-    } catch (error) {
-      console.error("Error validating OTP:", error);
-      setOtpError("❌ Error validating OTP.");
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmit(true);
-    setTimeLeft("07:30");
     const enteredOTP = otp.join("");
     await handleOtpVerification(enteredOTP);
   };
 
   const resendOtpHandler = async () => {
-    await handleOtpVerification();
+    setOtp(new Array(numberOfDigits).fill("")); // Clear OTP input
+    setOtpError(null); // Clear error message
+    setIsSubmit(false); // Reset submit state
+    setTimeLeft(450); // Reset timeLeft
+    await handleOtpVerification(); // Resend OTP
   };
 
   return (
@@ -146,7 +119,7 @@ function OTPValidate() {
               <div>
                 <button
                   type="submit"
-                  disabled={isSubmit ? true : false}
+                  disabled={isSubmit}
                   className={`inline-flex w-full items-center justify-center ${
                     isSubmit ? "bg-gray-600" : "bg-black"
                   } rounded-md px-3.5 py-2.5 font-semibold leading-7 text-white hover:bg-gray-600`}
@@ -154,9 +127,10 @@ function OTPValidate() {
                   Get started <FaArrowRight className="ml-2" size={16} />
                 </button>
               </div>
-              {timeLeft ? (
+              {timeLeft > 0 ? (
                 <p className="text-blue-500 text-lx">
-                  Expired in: {timeLeft} seconds
+                  Expired in: {Math.floor(timeLeft / 60)}:{timeLeft % 60}{" "}
+                  seconds
                 </p>
               ) : (
                 <p
@@ -166,16 +140,7 @@ function OTPValidate() {
                   Re-Generate Verification Code!
                 </p>
               )}
-              {otpError ? (
-                <p className="text-red-500 text-sm">{otpError}</p>
-              ) : (
-                <p>
-                  <b className="text-blue-500 text-lx">
-                    Verification code sent to your email!
-                  </b>
-                  <br /> Please enter the verification code.
-                </p>
-              )}
+              {otpError && <p className="text-red-500 text-sm">{otpError}</p>}
             </div>
           </form>
         </div>

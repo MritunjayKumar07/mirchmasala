@@ -67,7 +67,7 @@ function Signup() {
       const res = await registerUser(userData);
       console.log(res);
       if (res.status === 201) {
-        navigate(`/otp-validate`);
+        navigate(`/otp-validate/${data.email}`);
       }
       if (res.status === 401) {
         setIsSubmit(false);
