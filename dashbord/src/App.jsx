@@ -1,14 +1,14 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { Product } from "./components/products/Product";
-import SideNavBar from "./components/sideNavebar/SideNaveBar.jsx"; 
-import TopNavBar from "./components/topNavebar/TopNaveBar.jsx"; 
-import Dashboard from "./pages/Dashbord.jsx"; 
-import ErrorPage from "./pages/Dashbord.jsx"; 
+import SideNavBar from "./components/sideNavebar/SideNaveBar.jsx";
+import TopNavBar from "./components/topNavebar/TopNaveBar.jsx";
+import Dashboard from "./pages/Dashbord.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import { useState } from "react";
 import OTPValidate from "./pages/OTPValidate.jsx";
+import ApiError from "./pages/ErroHandling/ApiError.jsx";
 
 function App() {
   // const [isLogdIn, setIsLogdIn] = useState(true);
@@ -23,7 +23,8 @@ function App() {
             <Routes onUpdate={() => window.scrollTo(0, 0)}>
               <Route index path="/" element={<Dashboard />} />
               <Route path="/product" element={<Product />} />
-              <Route path="*" element={<ErrorPage />} />
+              <Route path="/api-error/:code" element={<ApiError />} />
+              <Route path="*" element={<ApiError />} />
             </Routes>
           </div>
         </div>
@@ -32,8 +33,9 @@ function App() {
           <Routes onUpdate={() => window.scrollTo(0, 0)}>
             <Route index path="/" element={<Signup />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/otp-validate" element={<OTPValidate/>} />
-            <Route path="*" element={<ErrorPage />} />
+            <Route path="/otp-validate" element={<OTPValidate />} />
+            <Route path="/api-error/:code" element={<ApiError />} />
+            <Route path="*" element={<ApiError />} />
           </Routes>
         </div>
       )}

@@ -130,6 +130,7 @@ const register = asyncHandler(async (req, res) => {
 //Validate OTP and get Access & Refresh Token
 const otpVerification = asyncHandler(async (req, res) => {
   const { email, otp } = req.body;
+  console.log([email, otp]);
 
   // Validate input fields
   if (!email || !otp) {
@@ -152,7 +153,7 @@ const otpVerification = asyncHandler(async (req, res) => {
 
   // Validate OTP
   if (Number(existUser.verificationCode) !== Number(otp)) {
-    throw new ApiError(404, "Invalid OTP entered.");
+    throw new ApiError(403, "Invalid OTP entered.");
   }
 
   // Calculate OTP expiration
@@ -163,13 +164,13 @@ const otpVerification = asyncHandler(async (req, res) => {
   );
 
   if (differenceInMinutes > 7) {
-    throw new ApiError(400, "OTP has expired.");
+    throw new ApiError(405, "OTP has expired.");
   }
 
   // Check if email is already verified
-  if (existUser.emailVerify) {
-    throw new ApiError(400, "Email is already verified.");
-  }
+  // if (existUser.emailVerify) {
+  //   throw new ApiError(409, "Email is already verified.");
+  // }
 
   // Mark the email as verified
   existUser.emailVerify = true;
@@ -182,14 +183,18 @@ const otpVerification = asyncHandler(async (req, res) => {
     existUser._id
   );
 
-  const user = await Admin.findByIdAndUpdate(existUser._id, {
-    emailVerify: true,
-  }).select("-password -verificationCode -refreshToken");
+  const user = {
+    _id: existUser._id,
+    email: existUser.email,
+  };
+  // const user = await Admin.findByIdAndUpdate(existUser._id, {
+  //   emailVerify: true,
+  // }).select("-password -verificationCode -refreshToken");
 
   // Set cookie options
   const cookieOptions = {
     httpOnly: true,
-    secure: true,
+    // secure: true,
     sameSite: "lax", // Adjust based on your requirements
   };
 
@@ -553,7 +558,9 @@ const getUserById = asyncHandler(async (req, res) => {
   const userId = req.query.userId;
 
   // Check if the user exists
-  const user = await Admin.findById(userId).select("-password -verificationCode -refreshToken");
+  const user = await Admin.findById(userId).select(
+    "-password -verificationCode -refreshToken"
+  );
 
   if (!user) {
     throw new ApiError(404, "User not found!");
@@ -578,5 +585,5 @@ export {
   addAddress,
   deleteAddress,
   getAllUsers,
-  getUserById
+  getUserById,
 };
